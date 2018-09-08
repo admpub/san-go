@@ -2,14 +2,14 @@
 
 VERSION := $(shell cat version.go| grep "\sVersion\s=" | cut -d '"' -f2)
 
+build:
+	go build ./...
+
 all: test build
 
 test:
 	go vet $(go list ./...)
 	go test -v -race ./...
-
-build:
-	go build
 
 release:
 	git tag v$(VERSION)

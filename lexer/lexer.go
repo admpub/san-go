@@ -1,32 +1,39 @@
 package san
 
-type stateFn func(lx *lexer) stateFn
+// StateFn represents the current lewer's state
+type StateFn func(lx *Lexer) StateFn
 
-type lexer struct {
+// Lexer is a SAN lexer
+type Lexer struct {
 	input             string
 	currentTokenStart int64
 	start             int64
 	pos               int64
-	tokens            chan token
+	tokens            chan Token
 	line              int64
 	col               int64
-	state             stateFn
-	stack             []stateFn
+	state             StateFn
+	stack             []StateFn
 }
 
-func NewLexer(input string) *lexer {
-	lx := &lexer{
+func Lex(input string) []Token {
+	ret := []Token{}
+	return ret
+}
+
+func NewLexer(input string) *Lexer {
+	lx := &Lexer{
 		input:  input,
 		state:  lexTop,
 		line:   1,
-		tokens: make(chan token),
-		stack:  make([]stateFn, 0, 10),
+		tokens: make(chan Token),
+		stack:  make([]StateFn, 0, 10),
 	}
 	return lx
 }
 
 // lexTop consumes elements at the top level of SAN data.
-func lexTop(lx *lexer) stateFn {
+func lexTop(lx *Lexer) StateFn {
 	/*
 		r := lx.next()
 		if isWhitespace(r) || isNL(r) {
@@ -56,15 +63,15 @@ func lexTop(lx *lexer) stateFn {
 }
 
 // skip ignores all slurped input and moves on to the next state.
-func (lx *lexer) skip(nextState stateFn) stateFn {
-	return func(lx *lexer) stateFn {
+func (lx *Lexer) skip(nextState StateFn) StateFn {
+	return func(lx *Lexer) StateFn {
 		lx.ignore()
 		return nextState
 	}
 }
 
 // ignore skips over the pending input before this point.
-func (lx *lexer) ignore() {
+func (lx *Lexer) ignore() {
 	lx.start = lx.pos
 }
 

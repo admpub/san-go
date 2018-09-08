@@ -14,14 +14,14 @@ func TestPositionString(t *testing.T) {
 	}
 }
 
-func TestInvalid(t *testing.T) {
+func TestValid(t *testing.T) {
 	for i, v := range []Position{
 		{0, 1234},
 		{1234, 0},
 		{0, 0},
 	} {
-		if !v.Invalid() {
-			t.Errorf("Position at %v is valid: %v", i, v)
+		if v.Valid() {
+			t.Errorf("Position at %v is invalid: %v", i, v)
 		}
 	}
 }

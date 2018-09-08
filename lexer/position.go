@@ -20,8 +20,7 @@ func (p Position) String() string {
 	return fmt.Sprintf("(%d, %d)", p.Line, p.Col)
 }
 
-// Invalid returns whether or not the position is valid (i.e. with negative or
-// null values)
-func (p Position) Invalid() bool {
-	return p.Line <= 0 || p.Col <= 0
+// Valid returns whether or not the position is valid (i.e. with negative or null values)
+func (p Position) Valid() bool {
+	return p.Line > 0 && p.Col > 0
 }

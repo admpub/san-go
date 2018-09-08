@@ -14,10 +14,10 @@ func e(format string, args ...interface{}) error {
 func Unmarshal(p []byte, v interface{}) error {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() != reflect.Ptr {
-		return e("Decode of non-pointer %s", reflect.TypeOf(v))
+		return e("Unmarshalling of non-pointer %s", reflect.TypeOf(v))
 	}
 	if rv.IsNil() {
-		return e("Decode of nil %s", reflect.TypeOf(v))
+		return e("unmarshalling of nil %s", reflect.TypeOf(v))
 	}
 	return nil
 }
