@@ -4,10 +4,11 @@
 [![GitHub release](https://img.shields.io/github/release/phasersec/san-go.svg)](https://github.com/phasersec/san-go/releases/latest)
 [![Build Status](https://travis-ci.org/phasersec/san-go.svg?branch=master)](https://travis-ci.org/phasersec/san-go)
 
-Spac: [https://astrocorp.net/san/](https://astrocorp.net/san/)
+SAN CLI and parser for Go.
+
+Spec: [https://astrocorp.net/san/](https://astrocorp.net/san/)
 
 Compatible with SAN version: [v1.0.0](https://astrocorp.net/san/versions/v1.0.0/)
-
 
 1. [Installation](#installation)
 
