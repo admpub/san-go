@@ -6,23 +6,30 @@ import (
 )
 
 func testLex(t *testing.T, input string, expectedTokens []Token) {
-	tokens := Lex(input)
+	Tokens := Lex(input)
 
-	if len(expectedTokens) != len(tokens) {
+	if len(expectedTokens) != len(Tokens) {
 		t.Fatalf(
-			"Not enought token lexed. Expected: %d\nGot: %d (%#v)\n",
+			"Not enought Token lexed. Expected: %d\nGot: %d (%#v)\n",
 			len(expectedTokens),
-			len(tokens),
-			tokens,
+			len(Tokens),
+			Tokens,
 		)
 	}
 
 	for i := range expectedTokens {
 
-		if reflect.DeepEqual(tokens[i], expectedTokens[i]) != true {
-			t.Errorf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens[i], tokens[i])
+		if reflect.DeepEqual(Tokens[i], expectedTokens[i]) != true {
+			t.Errorf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens[i], Tokens[i])
 		}
 	}
+}
+
+func TestSimpleComment(t *testing.T) {
+	testLex(t, "# blahblah", []Token{
+		{Position{1, 1}, TokenComment, "blahblah"},
+		{Position{1, 11}, TokenEOF, ""},
+	})
 }
 
 func TestSimpleString(t *testing.T) {
@@ -164,5 +171,14 @@ func TestNestedLists(t *testing.T) {
 		{Position{1, 11}, TokenRightBracket, "]"},
 		{Position{1, 12}, TokenRightBracket, "]"},
 		{Position{1, 13}, TokenEOF, ""},
+	})
+}
+
+func TestSimpleMultilineString(t *testing.T) {
+	testLex(t, `foo = """hello "literal" world"""`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenString, `hello "literal" world`},
+		{Position{1, 34}, TokenEOF, ""},
 	})
 }

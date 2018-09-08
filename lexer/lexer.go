@@ -74,9 +74,9 @@ func (lx *Lexer) lexText() StateFn {
 		switch next {
 		//case '[':
 		//	return lx.lexTableKey
-		case '#':
+		case hash:
 			return lx.lexComment(lx.lexRvalue)
-		case '=':
+		case equals:
 			return lx.lexEquals
 		case '\r':
 			fallthrough
@@ -161,16 +161,23 @@ func (lx *Lexer) peek() rune {
 }
 
 func (lx *Lexer) lexComment(previousState StateFn) StateFn {
-	return func() StateFn {
-		for next := lx.peek(); next != '\n' && next != eof; next = lx.peek() {
-			if next == '\r' && lx.follow("\r\n") {
-				break
-			}
-			lx.next()
+	var commentValue bytes.Buffer
+
+	for next := lx.peek(); next != '\n' && next != eof; next = lx.peek() {
+		if next == '\r' && lx.follow("\r\n") {
+			break
 		}
-		lx.ignore()
-		return previousState
+		lx.next()
+		commentValue.WriteRune(next)
 	}
+	strCommentValue := commentValue.String()[1:]
+	if len(strCommentValue) > 1 && isWhitespace(rune(strCommentValue[0])) {
+		strCommentValue = strCommentValue[1:]
+	}
+	lx.emitWithValue(TokenComment, strCommentValue)
+
+	lx.ignore()
+	return previousState
 }
 
 func (lx *Lexer) follow(next string) bool {
