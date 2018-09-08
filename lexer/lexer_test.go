@@ -182,3 +182,35 @@ func TestSimpleMultilineString(t *testing.T) {
 		{Position{1, 34}, TokenEOF, ""},
 	})
 }
+
+func TestLiteralString(t *testing.T) {
+	testLex(t, `foo = 'C:\Users\nodejs\templates'`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenString, `C:\Users\nodejs\templates`},
+		{Position{1, 34}, TokenEOF, ""},
+	})
+	testLex(t, `foo = '\\ServerX\admin$\system32\'`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenString, `\\ServerX\admin$\system32\`},
+		{Position{1, 35}, TokenEOF, ""},
+	})
+	testLex(t, `foo = 'Tom "Dubs" Preston-Werner'`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenString, `Tom "Dubs" Preston-Werner`},
+		{Position{1, 34}, TokenEOF, ""},
+	})
+	testLex(t, `foo = '<\i\c*\s*>'`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenString, `<\i\c*\s*>`},
+		{Position{1, 19}, TokenEOF, ""},
+	})
+	testLex(t, `foo = 'C:\Users\nodejs\unfinis`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenError, "lexer: unclosed string"},
+	})
+}

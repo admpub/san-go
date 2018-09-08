@@ -472,6 +472,7 @@ func (lx *Lexer) lexString() StateFn {
 	str, err := lx.lexStringAsString(terminator, discardLeadingNewLine, acceptNewLines)
 
 	if err != nil {
+		lx.col -= int64(len(terminator))
 		return lx.errorf(err.Error())
 	}
 
@@ -677,6 +678,7 @@ func (lx *Lexer) lexLiteralString() StateFn {
 
 	str, err := lx.lexLiteralStringAsString(terminator, discardLeadingNewLine)
 	if err != nil {
+		lx.col -= int64(len(terminator))
 		return lx.errorf(err.Error())
 	}
 
