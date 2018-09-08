@@ -8,7 +8,7 @@ build:
 all: test build
 
 test:
-	go vet $(go list ./...)
+	go vet ./...
 	go test -v -race ./...
 
 release:
