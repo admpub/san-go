@@ -33,7 +33,7 @@ func Lex(input string) []Token {
 	ret := []Token{}
 	lexer := NewLexer(input)
 
-	for token := range lexer.Next() {
+	for token := range lexer.Scan() {
 		ret = append(ret, token)
 	}
 
@@ -55,8 +55,8 @@ func NewLexer(input string) *Lexer {
 	return lx
 }
 
-// Next returns the next lexed token
-func (lx *Lexer) Next() chan Token {
+// Scan returns the next lexed token
+func (lx *Lexer) Scan() chan Token {
 	return lx.tokens
 }
 
