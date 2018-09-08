@@ -214,3 +214,12 @@ func TestLiteralString(t *testing.T) {
 		{Position{1, 7}, TokenError, "lexer: unclosed string"},
 	})
 }
+
+func TestQuotedKey(t *testing.T) {
+	testLex(t, "\"a b\" = 42", []Token{
+		{Position{1, 1}, TokenKey, "a b"},
+		{Position{1, 7}, TokenEquals, "="},
+		{Position{1, 9}, TokenInteger, "42"},
+		{Position{1, 11}, TokenEOF, ""},
+	})
+}
