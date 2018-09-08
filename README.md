@@ -1,10 +1,10 @@
 # SAN-go
 
 [![GoDoc](https://godoc.org/github.com/phasersec/san-go?status.svg)](https://godoc.org/github.com/phasersec/san-go)
-[![GitHub release](https://img.shields.io/github/release/phasersec/san-go.svg)](https://github.com/phasersec/san-go/releases/latest)
 [![Build Status](https://travis-ci.org/phasersec/san-go.svg?branch=master)](https://travis-ci.org/phasersec/san-go)
+[![GitHub release](https://img.shields.io/github/release/phasersec/san-go.svg)](https://github.com/phasersec/san-go/releases/latest)
 
-SAN (pronounce /seɪn/, like sane) CLI and parser for Go.
+SAN (pronounce `/seɪn/`, like sane) CLI and parser for Go.
 
 Spec: [https://astrocorp.net/san](https://astrocorp.net/san/)
 
