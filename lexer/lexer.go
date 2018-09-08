@@ -135,7 +135,7 @@ func (lx *Lexer) next() rune {
 	r := lx.read()
 
 	if r != eof {
-		lx.currentTokenStop++
+		lx.currentTokenStop += 1
 	}
 	return r
 }
@@ -143,7 +143,7 @@ func (lx *Lexer) next() rune {
 func (lx *Lexer) read() rune {
 	r := lx.peek()
 	if r == '\n' {
-		lx.endbufferLine++
+		lx.endbufferLine += 1
 		lx.endbufferCol = 1
 	} else {
 		lx.endbufferCol++
@@ -198,25 +198,25 @@ func (lx *Lexer) lexRvalue() StateFn {
 		switch next {
 		case '.':
 			return lx.errorf("lexer: cannot start Float with a dot")
-		case '=':
+		case equals:
 			return lx.lexEquals
-		case '[':
-			lx.depth++
+		case leftBrace:
+			lx.depth += 1
 			return lx.lexLeftBracket
-		case ']':
-			lx.depth--
+		case rightBrace:
+			lx.depth -= 1
 			return lx.lexRightBracket
-		case '{':
+		case leftBracket:
 			return lx.lexLeftBrace
-		case '}':
+		case rightBracket:
 			return lx.lexRightBrace
-		case '#':
+		case hash:
 			return lx.lexComment(lx.lexRvalue)
-		case '"':
+		case doubleQuote:
 			return lx.lexString
-		case '\'':
+		case singleQuote:
 			return lx.lexLiteralString
-		case ',':
+		case comma:
 			return lx.lexComma
 		case '\r':
 			fallthrough
@@ -234,13 +234,13 @@ func (lx *Lexer) lexRvalue() StateFn {
 			return lx.lexBoolean
 		}
 
-		/*if lx.follow("inf") {
+		if lx.follow("inf") {
 			return lx.lexInf
 		}
 
 		if lx.follow("nan") {
 			return lx.lexNan
-		}*/
+		}
 
 		if isWhitespace(next) {
 			lx.skip()
@@ -284,7 +284,6 @@ func (lx *Lexer) lexBoolean() StateFn {
 	if lx.follow("true") {
 		lx.fastForward(4)
 		lx.emitWithValue(TokenBoolean, "true")
-
 	} else {
 		lx.fastForward(5)
 		lx.emitWithValue(TokenBoolean, "false")
@@ -353,7 +352,7 @@ func (lx *Lexer) lexNumber() StateFn {
 				isValidRune = isValidBinaryRune
 			default:
 				if follow[1] >= 'a' && follow[1] <= 'z' || follow[1] >= 'A' && follow[1] <= 'Z' {
-					return lx.errorf("unknown number base: %s. possible options are x (hex) o (octal) b (binary)", string(follow[1]))
+					return lx.errorf("lexer unknown number base: %s. possible options are x (hex) o (octal) b (binary)", string(follow[1]))
 				}
 			}
 
@@ -469,7 +468,11 @@ func (lx *Lexer) lexString() StateFn {
 		return lx.errorf(err.Error())
 	}
 
+	// ugly, but to put the pos the starting quote
+	lx.col -= int64(len(terminator))
 	lx.emitWithValue(TokenString, str)
+	lx.col += int64(len(terminator))
+
 	lx.fastForward(len(terminator))
 	lx.ignore()
 	return lx.lexRvalue
@@ -500,11 +503,11 @@ func (lx *Lexer) lexKey() StateFn {
 			lx.next()
 			continue
 		} else if r == '\n' {
-			return lx.errorf("keys cannot contain new lines")
+			return lx.errorf("lexer: keys cannot contain new lines")
 		} else if isWhitespace(r) {
 			break
 		} else if !isValidBareChar(r) {
-			return lx.errorf("keys cannot contain %c character", r)
+			return lx.errorf("lexer: keys cannot contain %c character", r)
 		}
 		growingString += string(r)
 		lx.next()
@@ -577,14 +580,14 @@ func (lx *Lexer) lexStringAsString(terminator string, discardLeadingNewLine, acc
 				for i := 0; i < 4; i++ {
 					c := lx.peek()
 					if !isHexDigit(c) {
-						return "", errors.New("unfinished unicode escape")
+						return "", errors.New("lexer: unfinished unicode escape")
 					}
 					lx.next()
 					code = code + string(c)
 				}
 				intcode, err := strconv.ParseInt(code, 16, 32)
 				if err != nil {
-					return "", errors.New("invalid unicode escape: \\u" + code)
+					return "", errors.New("lexer: invalid unicode escape: \\u" + code)
 				}
 				growingString += string(rune(intcode))
 			case 'U':
@@ -593,24 +596,24 @@ func (lx *Lexer) lexStringAsString(terminator string, discardLeadingNewLine, acc
 				for i := 0; i < 8; i++ {
 					c := lx.peek()
 					if !isHexDigit(c) {
-						return "", errors.New("unfinished unicode escape")
+						return "", errors.New("lexer: unfinished unicode escape")
 					}
 					lx.next()
 					code = code + string(c)
 				}
 				intcode, err := strconv.ParseInt(code, 16, 64)
 				if err != nil {
-					return "", errors.New("invalid unicode escape: \\U" + code)
+					return "", errors.New("lexer: invalid unicode escape: \\U" + code)
 				}
 				growingString += string(rune(intcode))
 			default:
-				return "", errors.New("invalid escape sequence: \\" + string(lx.peek()))
+				return "", errors.New("lexer: invalid escape sequence: \\" + string(lx.peek()))
 			}
 		} else {
 			r := lx.peek()
 
 			if 0x00 <= r && r <= 0x1F && !(acceptNewLines && (r == '\n' || r == '\r')) {
-				return "", fmt.Errorf("unescaped control character %U", r)
+				return "", fmt.Errorf("lexer: unescaped control character %U", r)
 			}
 			lx.next()
 			growingString += string(r)
@@ -621,7 +624,7 @@ func (lx *Lexer) lexStringAsString(terminator string, discardLeadingNewLine, acc
 		}
 	}
 
-	return "", errors.New("unclosed string")
+	return "", errors.New("lexer: unclosed string")
 }
 
 func (lx *Lexer) lexLiteralStringAsString(terminator string, discardLeadingNewLine bool) (string, error) {
@@ -670,7 +673,11 @@ func (lx *Lexer) lexLiteralString() StateFn {
 		return lx.errorf(err.Error())
 	}
 
+	// ugly, but to put the pos the starting quote
+	lx.col -= int64(len(terminator))
 	lx.emitWithValue(TokenString, str)
+	lx.col += int64(len(terminator))
+
 	lx.fastForward(len(terminator))
 	lx.ignore()
 	return lx.lexRvalue

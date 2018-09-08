@@ -6,9 +6,22 @@ import (
 )
 
 func testLex(t *testing.T, input string, expectedTokens []Token) {
-	Tokens := Lex(input)
-	if !reflect.DeepEqual(Tokens, expectedTokens) {
-		t.Fatalf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens, Tokens)
+	tokens := Lex(input)
+
+	if len(expectedTokens) != len(tokens) {
+		t.Fatalf(
+			"Not enought token lexed. Expected: %d\nGot: %d (%#v)\n",
+			len(expectedTokens),
+			len(tokens),
+			tokens,
+		)
+	}
+
+	for i := range expectedTokens {
+
+		if reflect.DeepEqual(tokens[i], expectedTokens[i]) != true {
+			t.Errorf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens[i], tokens[i])
+		}
 	}
 }
 
@@ -16,7 +29,7 @@ func TestSimpleString(t *testing.T) {
 	testLex(t, `str = "myString"`, []Token{
 		{Position{1, 1}, TokenKey, "str"},
 		{Position{1, 5}, TokenEquals, "="},
-		{Position{1, 8}, TokenString, "myString"},
+		{Position{1, 7}, TokenString, "myString"},
 		{Position{1, 17}, TokenEOF, ""},
 	})
 }
@@ -54,9 +67,9 @@ func TestNestedStringList(t *testing.T) {
 		{Position{1, 3}, TokenEquals, "="},
 		{Position{1, 5}, TokenLeftBracket, "["},
 		{Position{1, 7}, TokenLeftBracket, "["},
-		{Position{1, 9}, TokenString, "hello"},
+		{Position{1, 8}, TokenString, "hello"},
 		{Position{1, 15}, TokenComma, ","},
-		{Position{1, 18}, TokenString, "world"},
+		{Position{1, 17}, TokenString, "world"},
 		{Position{1, 24}, TokenRightBracket, "]"},
 		{Position{1, 26}, TokenRightBracket, "]"},
 		{Position{1, 27}, TokenEOF, ""},
