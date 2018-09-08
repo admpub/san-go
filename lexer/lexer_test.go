@@ -394,3 +394,12 @@ func TestUnicodeString(t *testing.T) {
 		{Position{1, 22}, TokenEOF, ""},
 	})
 }
+
+func TestEscapeInString(t *testing.T) {
+	testLex(t, `foo = "\b\f\/"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "\b\f/"},
+		{Position{1, 15}, TokenEOF, ""},
+	})
+}
