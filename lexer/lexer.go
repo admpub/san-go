@@ -60,6 +60,7 @@ func (lx *Lexer) Next() chan Token {
 	return lx.tokens
 }
 
+// real lexer entry point
 func (lx *Lexer) run() {
 	for state := lx.lexText; state != nil; {
 		state = state()
@@ -74,9 +75,9 @@ func (lx *Lexer) lexText() StateFn {
 		switch next {
 		//case '[':
 		//	return lx.lexTableKey
-		case hash:
+		case Hash:
 			return lx.lexComment(lx.lexRvalue)
-		case equals:
+		case Equals:
 			return lx.lexEquals
 		case '\r':
 			fallthrough
@@ -97,7 +98,7 @@ func (lx *Lexer) lexText() StateFn {
 			return lx.lexKey
 		}
 
-		if next == eof {
+		if next == EOF {
 			lx.next()
 			break
 		}
@@ -134,7 +135,7 @@ func (lx *Lexer) skip() {
 func (lx *Lexer) next() rune {
 	r := lx.read()
 
-	if r != eof {
+	if r != EOF {
 		lx.currentTokenStop += 1
 	}
 	return r
@@ -155,7 +156,7 @@ func (lx *Lexer) read() rune {
 
 func (lx *Lexer) peek() rune {
 	if lx.pos >= int64(len(lx.input)) {
-		return eof
+		return EOF
 	}
 	return lx.input[lx.pos]
 }
@@ -163,7 +164,7 @@ func (lx *Lexer) peek() rune {
 func (lx *Lexer) lexComment(previousState StateFn) StateFn {
 	var commentValue bytes.Buffer
 
-	for next := lx.peek(); next != '\n' && next != eof; next = lx.peek() {
+	for next := lx.peek(); next != '\n' && next != EOF; next = lx.peek() {
 		if next == '\r' && lx.follow("\r\n") {
 			break
 		}
@@ -186,7 +187,7 @@ func (lx *Lexer) follow(next string) bool {
 
 func (lx *Lexer) peekString(size int) string {
 	maxIdx := int64(len(lx.input))
-	upperIdx := lx.pos + int64(size) // FIXME: potential overflow
+	upperIdx := lx.pos + int64(size)
 	if upperIdx > maxIdx {
 		upperIdx = maxIdx
 	}
@@ -203,27 +204,27 @@ func (lx *Lexer) lexRvalue() StateFn {
 	for {
 		next := lx.peek()
 		switch next {
-		case '.':
+		case Dot:
 			return lx.errorf("lexer: cannot start Float with a dot")
-		case equals:
+		case Equals:
 			return lx.lexEquals
-		case leftBrace:
+		case LeftBrace:
 			lx.depth += 1
-			return lx.lexLeftBracket
-		case rightBrace:
-			lx.depth -= 1
-			return lx.lexRightBracket
-		case leftBracket:
 			return lx.lexLeftBrace
-		case rightBracket:
+		case RightBrace:
+			lx.depth -= 1
 			return lx.lexRightBrace
-		case hash:
+		case LeftBracket:
+			return lx.lexLeftBracket
+		case RightBracket:
+			return lx.lexRightBracket
+		case Hash:
 			return lx.lexComment(lx.lexRvalue)
-		case doubleQuote:
+		case DoubleQuote:
 			return lx.lexString
-		case singleQuote:
+		case SingleQuote:
 			return lx.lexLiteralString
-		case comma:
+		case Comma:
 			return lx.lexComma
 		case '\r':
 			fallthrough
@@ -254,7 +255,7 @@ func (lx *Lexer) lexRvalue() StateFn {
 			continue
 		}
 
-		if next == eof {
+		if next == EOF {
 			lx.next()
 			break
 		}
@@ -627,7 +628,7 @@ func (lx *Lexer) lexStringAsString(terminator string, discardLeadingNewLine, acc
 			growingString += string(r)
 		}
 
-		if lx.peek() == eof {
+		if lx.peek() == EOF {
 			break
 		}
 	}
@@ -654,7 +655,7 @@ func (lx *Lexer) lexLiteralStringAsString(terminator string, discardLeadingNewLi
 		}
 
 		next := lx.peek()
-		if next == eof {
+		if next == EOF {
 			break
 		}
 		growingString += string(lx.next())
@@ -746,11 +747,11 @@ func isKeyChar(r rune) bool {
 	// Keys start with the first character that isn't whitespace or [ and end
 	// with the last non-whitespace character before the equals sign. Keys
 	// cannot contain a # character."
-	return !(r == '\r' || r == '\n' || r == eof || r == '=')
+	return !(r == '\r' || r == '\n' || r == EOF || r == '=')
 }
 
 func isKeyStartChar(r rune) bool {
-	return !(isWhitespace(r) || r == '\r' || r == '\n' || r == eof || r == '[')
+	return !(isWhitespace(r) || r == '\r' || r == '\n' || r == EOF || r == '[')
 }
 
 func isValidBareChar(r rune) bool {

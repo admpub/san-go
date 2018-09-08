@@ -20,7 +20,7 @@ func testLex(t *testing.T, input string, expectedTokens []Token) {
 	for i := range expectedTokens {
 
 		if reflect.DeepEqual(Tokens[i], expectedTokens[i]) != true {
-			t.Errorf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens[i], Tokens[i])
+			t.Errorf("Different Token.\nExpected: %s\nGot     : %s\n", expectedTokens[i], Tokens[i])
 		}
 	}
 }
@@ -221,5 +221,18 @@ func TestQuotedKey(t *testing.T) {
 		{Position{1, 7}, TokenEquals, "="},
 		{Position{1, 9}, TokenInteger, "42"},
 		{Position{1, 11}, TokenEOF, ""},
+	})
+}
+
+func TestSimpleBrace(t *testing.T) {
+	testLex(t, "map = { x = 1 }", []Token{
+		{Position{1, 1}, TokenKey, "map"},
+		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 7}, TokenLeftBrace, "{"},
+		{Position{1, 9}, TokenKey, "x"},
+		{Position{1, 11}, TokenEquals, "="},
+		{Position{1, 13}, TokenInteger, "1"},
+		{Position{1, 15}, TokenRightBrace, "}"},
+		{Position{1, 16}, TokenEOF, ""},
 	})
 }

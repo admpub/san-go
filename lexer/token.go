@@ -22,16 +22,17 @@ const (
 )
 
 const (
-	eof          = 0
-	comma        = ','
-	hash         = '#'
-	equals       = '='
-	leftBracket  = '{'
-	rightBracket = '}'
-	leftBrace    = '['
-	rightBrace   = ']'
-	singleQuote  = '\''
-	doubleQuote  = '"'
+	EOF          = 0
+	Comma        = ','
+	Hash         = '#'
+	Equals       = '='
+	LeftBrace    = '{'
+	RightBrace   = '}'
+	LeftBracket  = '['
+	RightBracket = ']'
+	SingleQuote  = '\''
+	DoubleQuote  = '"'
+	Dot          = '.'
 )
 
 // TokenType represents all the possible values of a Token
@@ -79,12 +80,12 @@ func (t TokenType) String() string {
 }
 
 func (t Token) String() string {
-	switch t.Type {
-	case TokenEOF:
-		return "EOF"
-	case TokenError:
-		return t.Value
-	}
 
-	return fmt.Sprintf("%q", t.Value)
+	return fmt.Sprintf(
+		"{ line: %d, col: %d, type: %s, value: \"%s\" }",
+		t.Position.Line,
+		t.Position.Col,
+		t.Type,
+		t.Value,
+	)
 }
