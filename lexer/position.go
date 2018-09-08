@@ -1,4 +1,4 @@
-package san
+package lexer
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 // column number, respectively.  Values of zero or less will cause Invalid(),
 // to return true.
 type Position struct {
-	Line int // line within the document
-	Col  int // column within the line
+	Line int64 // line within the document
+	Col  int64 // column within the line
 }
 
 // String representation of the position.

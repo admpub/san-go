@@ -1,4 +1,4 @@
-package san
+package lexer
 
 import (
 	"fmt"

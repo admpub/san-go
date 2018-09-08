@@ -1,4 +1,4 @@
-package san
+package lexer
 
 import (
 	"reflect"
@@ -8,7 +8,7 @@ import (
 func testLex(t *testing.T, input string, expectedTokens []Token) {
 	Tokens := Lex(input)
 	if !reflect.DeepEqual(Tokens, expectedTokens) {
-		t.Fatalf("Different Token. Expected: %#v\nGot: %#v\n", expectedTokens, Tokens)
+		t.Fatalf("Different Token.\nExpected: %#v\nGot     : %#v\n", expectedTokens, Tokens)
 	}
 }
 
