@@ -35,7 +35,7 @@ func TestSimpleComment(t *testing.T) {
 func TestSimpleString(t *testing.T) {
 	testLex(t, `str = "myString"`, []Token{
 		{Position{1, 1}, TokenKey, "str"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, "myString"},
 		{Position{1, 17}, TokenEOF, ""},
 	})
@@ -44,7 +44,7 @@ func TestSimpleString(t *testing.T) {
 func TestFloatWithExponent1(t *testing.T) {
 	testLex(t, "a = 5e+22", []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenFloat, "5e+22"},
 		{Position{1, 10}, TokenEOF, ""},
 	})
@@ -53,7 +53,7 @@ func TestFloatWithExponent1(t *testing.T) {
 func TestFloatWithExponent2(t *testing.T) {
 	testLex(t, "a = 6.69e-22", []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenFloat, "6.69e-22"},
 		{Position{1, 13}, TokenEOF, ""},
 	})
@@ -62,7 +62,7 @@ func TestFloatWithExponent2(t *testing.T) {
 func TestSimpleBoolean(t *testing.T) {
 	testLex(t, "foo = false", []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenBoolean, "false"},
 		{Position{1, 12}, TokenEOF, ""},
 	})
@@ -71,7 +71,7 @@ func TestSimpleBoolean(t *testing.T) {
 func TestNestedStringList(t *testing.T) {
 	testLex(t, `a = [ ["hello", "world"] ]`, []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenLeftBracket, "["},
 		{Position{1, 7}, TokenLeftBracket, "["},
 		{Position{1, 8}, TokenString, "hello"},
@@ -86,7 +86,7 @@ func TestNestedStringList(t *testing.T) {
 func TestNestedIntegerList(t *testing.T) {
 	testLex(t, "a = [ [42, 21], [10] ]", []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenLeftBracket, "["},
 		{Position{1, 7}, TokenLeftBracket, "["},
 		{Position{1, 8}, TokenInteger, "42"},
@@ -105,7 +105,7 @@ func TestNestedIntegerList(t *testing.T) {
 func TestIntegerList(t *testing.T) {
 	testLex(t, "a = [ 42, 21, 10, ]", []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenLeftBracket, "["},
 		{Position{1, 7}, TokenInteger, "42"},
 		{Position{1, 9}, TokenComma, ","},
@@ -121,7 +121,7 @@ func TestIntegerList(t *testing.T) {
 func TestBooleanList(t *testing.T) {
 	testLex(t, "foo = [true, false, true]", []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenLeftBracket, "["},
 		{Position{1, 8}, TokenBoolean, "true"},
 		{Position{1, 12}, TokenComma, ","},
@@ -139,10 +139,10 @@ b = "spacex"
 `
 	testLex(t, str, []Token{
 		{Position{1, 1}, TokenKey, "a"},
-		{Position{1, 3}, TokenEquals, "="},
+		{Position{1, 3}, TokenEqual, "="},
 		{Position{1, 5}, TokenString, "tesla"},
 		{Position{2, 1}, TokenKey, "b"},
-		{Position{2, 3}, TokenEquals, "="},
+		{Position{2, 3}, TokenEqual, "="},
 		{Position{2, 5}, TokenString, "spacex"},
 		{Position{3, 1}, TokenEOF, ""},
 	})
@@ -151,10 +151,10 @@ b = "spacex"
 func TestMultiInteger(t *testing.T) {
 	testLex(t, "foo = 42\nbar=21", []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenInteger, "42"},
 		{Position{2, 1}, TokenKey, "bar"},
-		{Position{2, 4}, TokenEquals, "="},
+		{Position{2, 4}, TokenEqual, "="},
 		{Position{2, 5}, TokenInteger, "21"},
 		{Position{2, 7}, TokenEOF, ""},
 	})
@@ -163,7 +163,7 @@ func TestMultiInteger(t *testing.T) {
 func TestNestedLists(t *testing.T) {
 	testLex(t, "foo = [[[]]]", []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenLeftBracket, "["},
 		{Position{1, 8}, TokenLeftBracket, "["},
 		{Position{1, 9}, TokenLeftBracket, "["},
@@ -177,48 +177,183 @@ func TestNestedLists(t *testing.T) {
 func TestSimpleMultilineString(t *testing.T) {
 	testLex(t, `foo = """hello "literal" world"""`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, `hello "literal" world`},
 		{Position{1, 34}, TokenEOF, ""},
+	})
+}
+
+func TestKeyEqualStringNoEscape(t *testing.T) {
+	testLex(t, "foo = \"hello \u0002\"", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenError, "lexer: unescaped control character U+0002"},
+	})
+	testLex(t, "foo = \"hello \u001F\"", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenError, "lexer: unescaped control character U+001F"},
+	})
+}
+
+func TestKeyEqualStringUnicodeEscape(t *testing.T) {
+	testLex(t, `foo = "hello \u2665"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello ♥"},
+		{Position{1, 21}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "hello \U000003B4"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello δ"},
+		{Position{1, 25}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "\uabcd"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "\uabcd"},
+		{Position{1, 15}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "\uABCD"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "\uABCD"},
+		{Position{1, 15}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "\U000bcdef"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "\U000bcdef"},
+		{Position{1, 19}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "\U000BCDEF"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "\U000BCDEF"},
+		{Position{1, 19}, TokenEOF, ""},
+	})
+	testLex(t, `foo = "\u2"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenError, "lexer: unfinished unicode escape"},
+	})
+	testLex(t, `foo = "\U2"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenError, "lexer: unfinished unicode escape"},
 	})
 }
 
 func TestLiteralString(t *testing.T) {
 	testLex(t, `foo = 'C:\Users\nodejs\templates'`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, `C:\Users\nodejs\templates`},
 		{Position{1, 34}, TokenEOF, ""},
 	})
 	testLex(t, `foo = '\\ServerX\admin$\system32\'`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, `\\ServerX\admin$\system32\`},
 		{Position{1, 35}, TokenEOF, ""},
 	})
 	testLex(t, `foo = 'Tom "Dubs" Preston-Werner'`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, `Tom "Dubs" Preston-Werner`},
 		{Position{1, 34}, TokenEOF, ""},
 	})
 	testLex(t, `foo = '<\i\c*\s*>'`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenString, `<\i\c*\s*>`},
 		{Position{1, 19}, TokenEOF, ""},
 	})
 	testLex(t, `foo = 'C:\Users\nodejs\unfinis`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenError, "lexer: unclosed string"},
+	})
+}
+
+func TestMultilineString(t *testing.T) {
+	testLex(t, `foo = """hello "literal" world"""`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, `hello "literal" world`},
+		{Position{1, 34}, TokenEOF, ""},
+	})
+
+	testLex(t, "foo = \"\"\"\r\nhello\\\r\n\"literal\"\\\nworld\"\"\"", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello\"literal\"world"},
+		{Position{4, 9}, TokenEOF, ""},
+	})
+
+	testLex(t, "foo = \"\"\"\\\n    \\\n    \\\n    hello\\\nmultiline\\\nworld\"\"\"", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hellomultilineworld"},
+		{Position{6, 9}, TokenEOF, ""},
+	})
+
+	testLex(t, "key2 = \"\"\"\nThe quick brown \\\n\n\n  fox jumps over \\\n    the lazy dog.\"\"\"", []Token{
+		{Position{1, 1}, TokenKey, "key2"},
+		{Position{1, 6}, TokenEqual, "="},
+		{Position{1, 8}, TokenString, "The quick brown fox jumps over the lazy dog."},
+		{Position{6, 21}, TokenEOF, ""},
+	})
+
+	testLex(t, "key2 = \"\"\"\\\n       The quick brown \\\n       fox jumps over \\\n       the lazy dog.\\\n       \"\"\"", []Token{
+		{Position{1, 1}, TokenKey, "key2"},
+		{Position{1, 6}, TokenEqual, "="},
+		{Position{1, 8}, TokenString, "The quick brown fox jumps over the lazy dog."},
+		{Position{5, 11}, TokenEOF, ""},
+	})
+
+	testLex(t, `key2 = "Roses are red\nViolets are blue"`, []Token{
+		{Position{1, 1}, TokenKey, "key2"},
+		{Position{1, 6}, TokenEqual, "="},
+		{Position{1, 8}, TokenString, "Roses are red\nViolets are blue"},
+		{Position{1, 41}, TokenEOF, ""},
+	})
+
+	testLex(t, "key2 = \"\"\"\nRoses are red\nViolets are blue\"\"\"", []Token{
+		{Position{1, 1}, TokenKey, "key2"},
+		{Position{1, 6}, TokenEqual, "="},
+		{Position{1, 8}, TokenString, "Roses are red\nViolets are blue"},
+		{Position{3, 20}, TokenEOF, ""},
+	})
+}
+
+func TestMultilineLiteralString(t *testing.T) {
+	testLex(t, `foo = '''hello 'literal' world'''`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, `hello 'literal' world`},
+		{Position{1, 34}, TokenEOF, ""},
+	})
+
+	testLex(t, "foo = '''\nhello\n'literal'\nworld'''", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello\n'literal'\nworld"},
+		{Position{4, 9}, TokenEOF, ""},
+	})
+	testLex(t, "foo = '''\r\nhello\r\n'literal'\r\nworld'''", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello\r\n'literal'\r\nworld"},
+		{Position{4, 9}, TokenEOF, ""},
 	})
 }
 
 func TestQuotedKey(t *testing.T) {
 	testLex(t, "\"a b\" = 42", []Token{
 		{Position{1, 1}, TokenKey, "a b"},
-		{Position{1, 7}, TokenEquals, "="},
+		{Position{1, 7}, TokenEqual, "="},
 		{Position{1, 9}, TokenInteger, "42"},
 		{Position{1, 11}, TokenEOF, ""},
 	})
@@ -227,12 +362,35 @@ func TestQuotedKey(t *testing.T) {
 func TestSimpleBrace(t *testing.T) {
 	testLex(t, "map = { x = 1 }", []Token{
 		{Position{1, 1}, TokenKey, "map"},
-		{Position{1, 5}, TokenEquals, "="},
+		{Position{1, 5}, TokenEqual, "="},
 		{Position{1, 7}, TokenLeftBrace, "{"},
 		{Position{1, 9}, TokenKey, "x"},
-		{Position{1, 11}, TokenEquals, "="},
+		{Position{1, 11}, TokenEqual, "="},
 		{Position{1, 13}, TokenInteger, "1"},
 		{Position{1, 15}, TokenRightBrace, "}"},
 		{Position{1, 16}, TokenEOF, ""},
+	})
+}
+
+func TestLexUnknownValue(t *testing.T) {
+	testLex(t, `a = !b`, []Token{
+		{Position{1, 1}, TokenKey, "a"},
+		{Position{1, 3}, TokenEqual, "="},
+		{Position{1, 5}, TokenError, "lexer: no value can start with !"},
+	})
+
+	testLex(t, `a = \b`, []Token{
+		{Position{1, 1}, TokenKey, "a"},
+		{Position{1, 3}, TokenEqual, "="},
+		{Position{1, 5}, TokenError, "lexer: no value can start with \\"},
+	})
+}
+
+func TestUnicodeString(t *testing.T) {
+	testLex(t, `foo = "hello ♥ world"`, []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "hello ♥ world"},
+		{Position{1, 22}, TokenEOF, ""},
 	})
 }

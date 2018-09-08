@@ -73,12 +73,10 @@ func (lx *Lexer) lexText() StateFn {
 	for {
 		next := lx.peek()
 		switch next {
-		//case '[':
-		//	return lx.lexTableKey
 		case Hash:
 			return lx.lexComment(lx.lexRvalue)
-		case Equals:
-			return lx.lexEquals
+		case Equal:
+			return lx.lexEqual
 		case '\r':
 			fallthrough
 		case '\n':
@@ -194,9 +192,9 @@ func (lx *Lexer) peekString(size int) string {
 	return string(lx.input[lx.pos:upperIdx])
 }
 
-func (lx *Lexer) lexEquals() StateFn {
+func (lx *Lexer) lexEqual() StateFn {
 	lx.next()
-	lx.emit(TokenEquals)
+	lx.emit(TokenEqual)
 	return lx.lexRvalue
 }
 
@@ -206,8 +204,8 @@ func (lx *Lexer) lexRvalue() StateFn {
 		switch next {
 		case Dot:
 			return lx.errorf("lexer: cannot start Float with a dot")
-		case Equals:
-			return lx.lexEquals
+		case Equal:
+			return lx.lexEqual
 		case LeftBrace:
 			lx.depth += 1
 			return lx.lexLeftBrace
@@ -456,6 +454,8 @@ func (lx *Lexer) lexNan() StateFn {
 }
 
 func (lx *Lexer) lexString() StateFn {
+	lineOrig := lx.line
+	colOrig := lx.col
 	lx.skip()
 
 	// handle special case for triple-quote
@@ -473,14 +473,16 @@ func (lx *Lexer) lexString() StateFn {
 	str, err := lx.lexStringAsString(terminator, discardLeadingNewLine, acceptNewLines)
 
 	if err != nil {
-		lx.col -= int64(len(terminator))
+		lx.setLineCol(lineOrig, colOrig)
 		return lx.errorf(err.Error())
 	}
 
 	// ugly, but to put the pos the starting quote
-	lx.col -= int64(len(terminator))
+	colAfter := lx.col
+	lineAfter := lx.line
+	lx.setLineCol(lineOrig, colOrig)
 	lx.emitWithValue(TokenString, str)
-	lx.col += int64(len(terminator))
+	lx.setLineCol(lineAfter, colAfter)
 
 	lx.fastForward(len(terminator))
 	lx.ignore()
@@ -665,6 +667,8 @@ func (lx *Lexer) lexLiteralStringAsString(terminator string, discardLeadingNewLi
 }
 
 func (lx *Lexer) lexLiteralString() StateFn {
+	colOrig := lx.col
+	lineOrig := lx.line
 	lx.skip()
 
 	// handle special case for triple-quote
@@ -679,18 +683,26 @@ func (lx *Lexer) lexLiteralString() StateFn {
 
 	str, err := lx.lexLiteralStringAsString(terminator, discardLeadingNewLine)
 	if err != nil {
-		lx.col -= int64(len(terminator))
+		lx.setLineCol(lineOrig, colOrig)
 		return lx.errorf(err.Error())
 	}
 
 	// ugly, but to put the pos the starting quote
-	lx.col -= int64(len(terminator))
+	colAfter := lx.col
+	lineAfter := lx.line
+	lx.setLineCol(lineOrig, colOrig)
 	lx.emitWithValue(TokenString, str)
-	lx.col += int64(len(terminator))
+	lx.setLineCol(lineAfter, colAfter)
 
 	lx.fastForward(len(terminator))
 	lx.ignore()
 	return lx.lexRvalue
+}
+
+// quick function to set good offset for strings
+func (lx *Lexer) setLineCol(line, col int64) {
+	lx.line = line
+	lx.col = col
 }
 
 // errorf stops all lexing by emitting an error and returning `nil`.
@@ -745,7 +757,7 @@ func isAlphanumeric(r rune) bool {
 
 func isKeyChar(r rune) bool {
 	// Keys start with the first character that isn't whitespace or [ and end
-	// with the last non-whitespace character before the equals sign. Keys
+	// with the last non-whitespace character before the Equal sign. Keys
 	// cannot contain a # character."
 	return !(r == '\r' || r == '\n' || r == EOF || r == '=')
 }

@@ -14,7 +14,7 @@ func TestTokenString(t *testing.T) {
 		{TokenError, "Error"},
 		{TokenEOF, "EOF"},
 		{TokenComma, "Comma"},
-		{TokenEquals, "Equals"},
+		{TokenEqual, "Equal"},
 		{TokenLeftBracket, "LeftBracket"},
 		{TokenRightBracket, "RightBracket"},
 		{TokenLeftBrace, "LeftBrace"},

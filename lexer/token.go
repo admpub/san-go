@@ -8,7 +8,7 @@ const (
 	TokenError TokenType = iota
 	TokenEOF
 	TokenComma
-	TokenEquals
+	TokenEqual
 	TokenLeftBracket
 	TokenRightBracket
 	TokenLeftBrace
@@ -25,7 +25,7 @@ const (
 	EOF          = 0
 	Comma        = ','
 	Hash         = '#'
-	Equals       = '='
+	Equal        = '='
 	LeftBrace    = '{'
 	RightBrace   = '}'
 	LeftBracket  = '['
@@ -53,8 +53,8 @@ func (t TokenType) String() string {
 		return "EOF"
 	case TokenComma:
 		return "Comma"
-	case TokenEquals:
-		return "Equals"
+	case TokenEqual:
+		return "Equal"
 	case TokenLeftBracket:
 		return "LeftBracket"
 	case TokenRightBracket:
