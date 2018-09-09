@@ -29,7 +29,7 @@ type Lexer struct {
 }
 
 // Lex returns all the lexed tokens for the given input
-func Lex(input string) []Token {
+func Lex(input []byte) []Token {
 	ret := []Token{}
 	lexer := NewLexer(input)
 
@@ -41,9 +41,9 @@ func Lex(input string) []Token {
 }
 
 // NewLexer returns a new Lexer initialized with input
-func NewLexer(input string) *Lexer {
+func NewLexer(input []byte) *Lexer {
 	lx := &Lexer{
-		input:         bytes.Runes([]byte(input)),
+		input:         bytes.Runes(input),
 		line:          1,
 		col:           1,
 		endbufferLine: 1,
@@ -56,7 +56,7 @@ func NewLexer(input string) *Lexer {
 }
 
 // Next returns the next lexed token
-func (lx *Lexer) Next() chan Token {
+func (lx *Lexer) Next() <-chan Token {
 	return lx.tokens
 }
 
@@ -523,6 +523,11 @@ func (lx *Lexer) lexKey() StateFn {
 		growingString += string(r)
 		lx.next()
 	}
+
+	if growingString == "" {
+		return lx.errorf("lexer: keys cannot be emtpy")
+	}
+
 	lx.emitWithValue(TokenKey, growingString)
 	return lx.lexText
 }

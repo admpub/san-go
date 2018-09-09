@@ -6,7 +6,7 @@ import (
 )
 
 func testLex(t *testing.T, input string, expectedTokens []Token) {
-	Tokens := Lex(input)
+	Tokens := Lex([]byte(input))
 
 	if len(expectedTokens) != len(Tokens) {
 		t.Fatalf(
@@ -130,6 +130,16 @@ func TestBooleanList(t *testing.T) {
 		{Position{1, 21}, TokenBoolean, "true"},
 		{Position{1, 25}, TokenRightBracket, "]"},
 		{Position{1, 26}, TokenEOF, ""},
+	})
+}
+
+func TestBadList(t *testing.T) {
+	testLex(t, "foo = [true", []Token{
+		{Position{1, 1}, TokenKey, "foo"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenLeftBracket, "["},
+		{Position{1, 8}, TokenBoolean, "true"},
+		{Position{1, 12}, TokenEOF, ""},
 	})
 }
 
