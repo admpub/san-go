@@ -41,6 +41,15 @@ func TestSimpleString(t *testing.T) {
 	})
 }
 
+func TestDigitalKey(t *testing.T) {
+	testLex(t, `123 = "myString"`, []Token{
+		{Position{1, 1}, TokenKey, "123"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "myString"},
+		{Position{1, 17}, TokenEOF, ""},
+	})
+}
+
 func TestFloatWithExponent1(t *testing.T) {
 	testLex(t, "a = 5e+22", []Token{
 		{Position{1, 1}, TokenKey, "a"},
@@ -381,6 +390,19 @@ func TestSimpleBrace(t *testing.T) {
 		{Position{1, 16}, TokenEOF, ""},
 	})
 }
+
+//func TestDigitalKeyMap(t *testing.T) {
+//	testLex(t, `123 = { 5 = 6 }`, []Token{
+//		{Position{1, 1}, TokenKey, "123"},
+//		{Position{1, 5}, TokenEqual, "="},
+//		{Position{1, 7}, TokenLeftBrace, "{"},
+//		{Position{1, 9}, TokenKey, "5"},
+//		{Position{1, 11}, TokenEqual, "="},
+//		{Position{1, 13}, TokenInteger, "6"},
+//		{Position{1, 15}, TokenRightBrace, "}"},
+//		{Position{1, 16}, TokenEOF, ""},
+//	})
+//}
 
 func TestLexUnknownValue(t *testing.T) {
 	testLex(t, `a = !b`, []Token{

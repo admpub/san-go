@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -84,7 +85,8 @@ func (p *Parser) parseAssign(key lexer.Token) StateFn {
 		return nil
 	}
 
-	position, value := p.parseRvalue()
+	token := p.nextToken()
+	position, value := p.parseRvalue(token)
 	if p.err != nil {
 		return nil
 	}
@@ -98,8 +100,7 @@ func (p *Parser) parseAssign(key lexer.Token) StateFn {
 	return p.parseStart
 }
 
-func (p *Parser) parseRvalue() (lexer.Position, interface{}) {
-	tok := p.nextToken()
+func (p *Parser) parseRvalue(tok *lexer.Token) (lexer.Position, interface{}) {
 	if p.err != nil {
 		return lexer.Position{}, nil
 	}
@@ -121,8 +122,10 @@ func (p *Parser) parseRvalue() (lexer.Position, interface{}) {
 		return tok.Position, p.parseInteger(*tok)
 	case lexer.TokenFloat:
 		return tok.Position, p.parseFloat(*tok)
-	// case lexer.TokenLeftBrace:
-	// case lexer.TokenLeftBracket
+	case lexer.TokenLeftBrace:
+		return tok.Position, p.parseMap(tok.Position)
+	case lexer.TokenLeftBracket:
+		return tok.Position, p.parseList()
 	default:
 		p.stateTokenError(*tok, "unexpected token")
 		return tok.Position, nil
@@ -226,6 +229,105 @@ func (p *Parser) parseFloat(token lexer.Token) float64 {
 	return val
 }
 
+func (p *Parser) parseMap(position lexer.Position) *Tree {
+	tree := NewTree()
+	tree.Position = position
+	var previous *lexer.Token
+
+Loop:
+	for {
+		token := p.nextToken()
+		if token == nil || token.Type == lexer.TokenEOF {
+			p.stateTokenError(*token, "unterminated map")
+			return nil
+		}
+		switch token.Type {
+		case lexer.TokenRightBrace:
+			break Loop
+		case lexer.TokenKey:
+			if !tokenIsComma(previous) && previous != nil {
+				p.stateTokenError(*token, "unterminated map")
+				return nil
+			}
+			p.expect(lexer.TokenEqual)
+			if p.err != nil {
+				return nil
+			}
+			token = p.nextToken()
+			position, value := p.parseRvalue(token)
+			if p.err != nil {
+				return nil
+			}
+			_, _ = position, value
+			tree.SetPath([]string{token.Value}, value)
+		case lexer.TokenComma:
+			if previous == nil {
+				p.stateTokenError(*token, "map cannot start with a comma")
+				return nil
+			}
+			if tokenIsComma(previous) {
+				p.stateTokenError(*previous, "trailing comma at the end of map")
+				return nil
+			}
+			p.nextToken()
+		default:
+			p.stateTokenError(*token, fmt.Sprintf("unexpected token in map"))
+			return nil
+		}
+		previous = token
+	}
+	if tokenIsComma(previous) {
+		p.stateTokenError(*previous, "trailing comma at the end of map")
+	}
+	return tree
+}
+
+func (p *Parser) parseList() interface{} {
+	var array []interface{}
+	arrayType := reflect.TypeOf(nil)
+	for {
+		token := p.nextToken()
+		if token == nil || token.Type == lexer.TokenEOF {
+			p.stateTokenError(*token, "unterminated list")
+			return nil
+		}
+		position, val := p.parseRvalue(token)
+		_ = position
+		if arrayType == nil {
+			arrayType = reflect.TypeOf(val)
+		}
+		if reflect.TypeOf(val) != arrayType {
+			p.stateTokenError(*token, "mixed tpyes in list")
+			return nil
+		}
+		array = append(array, val)
+		token = p.nextToken()
+		if token == nil || token.Type == lexer.TokenEOF {
+			p.stateTokenError(*token, "unterminated list")
+			return nil
+		}
+		if token.Type != lexer.TokenRightBracket && token.Type != lexer.TokenComma {
+			p.stateTokenError(*token, "missing comma in list")
+			return nil
+		}
+		if token.Type == lexer.TokenRightBracket {
+			break
+		}
+	}
+	// An array of Trees is actually an array of inline
+	// tables, which is a shorthand for a table array. If the
+	// array was not converted from []interface{} to []*Tree,
+	// the two notations would not be equivalent.
+	if arrayType == reflect.TypeOf(NewTree()) {
+		tomlArray := make([]*Tree, len(array))
+		for i, v := range array {
+			tomlArray[i] = v.(*Tree)
+		}
+		return tomlArray
+	}
+	return array
+}
+
 func (p *Parser) nextToken() *lexer.Token {
 	token, ok := <-p.tokens
 	if ok != true {
@@ -283,4 +385,8 @@ func hexNumberContainsInvalidUnderscore(value string) error {
 func cleanupNumberToken(value string) string {
 	cleanedVal := strings.Replace(value, "_", "", -1)
 	return cleanedVal
+}
+
+func tokenIsComma(t *lexer.Token) bool {
+	return t != nil && t.Type == lexer.TokenComma
 }
