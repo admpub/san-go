@@ -283,8 +283,8 @@ Loop:
 }
 
 func (p *Parser) parseList() interface{} {
-	var array []interface{}
-	arrayType := reflect.TypeOf(nil)
+	var list []interface{}
+	listType := reflect.TypeOf(nil)
 	for {
 		token := p.nextToken()
 		if token == nil || token.Type == lexer.TokenEOF {
@@ -293,14 +293,14 @@ func (p *Parser) parseList() interface{} {
 		}
 		position, val := p.parseRvalue(token)
 		_ = position
-		if arrayType == nil {
-			arrayType = reflect.TypeOf(val)
+		if listType == nil {
+			listType = reflect.TypeOf(val)
 		}
-		if reflect.TypeOf(val) != arrayType {
+		if reflect.TypeOf(val) != listType {
 			p.stateTokenError(*token, "mixed tpyes in list")
 			return nil
 		}
-		array = append(array, val)
+		list = append(list, val)
 		token = p.nextToken()
 		if token == nil || token.Type == lexer.TokenEOF {
 			p.stateTokenError(*token, "unterminated list")
@@ -314,18 +314,18 @@ func (p *Parser) parseList() interface{} {
 			break
 		}
 	}
-	// An array of Trees is actually an array of inline
-	// tables, which is a shorthand for a table array. If the
-	// array was not converted from []interface{} to []*Tree,
+	// An list of Trees is actually an list of inline
+	// tables, which is a shorthand for a table list. If the
+	// list was not converted from []interface{} to []*Tree,
 	// the two notations would not be equivalent.
-	if arrayType == reflect.TypeOf(NewTree()) {
-		tomlArray := make([]*Tree, len(array))
-		for i, v := range array {
-			tomlArray[i] = v.(*Tree)
+	if listType == reflect.TypeOf(NewTree()) {
+		sanList := make([]*Tree, len(list))
+		for i, v := range list {
+			sanList[i] = v.(*Tree)
 		}
-		return tomlArray
+		return sanList
 	}
-	return array
+	return list
 }
 
 func (p *Parser) nextToken() *lexer.Token {
