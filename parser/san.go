@@ -1,12 +1,14 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/phasersec/san-go/lexer"
 )
 
 // Tree is the result of the parsing of a SAN file.
 type Tree struct {
-	Values   map[string]interface{} // string -> *tomlValue, *Tree, []*Tree, comments
+	Values   map[string]interface{} // string -> *Value, *Tree, []*Tree, comments
 	Position lexer.Position
 }
 
@@ -61,4 +63,74 @@ func (t *Tree) SetPath(keys []string, value interface{}) {
 	}
 
 	subtree.Values[keys[len(keys)-1]] = toInsert
+}
+
+// Has returns a boolean indicating if the given key exists.
+func (t *Tree) Has(key string) bool {
+	if key == "" {
+		return false
+	}
+	return t.HasPath(strings.Split(key, "."))
+}
+
+// HasPath returns true if the given path of keys exists, false otherwise.
+func (t *Tree) HasPath(keys []string) bool {
+	return t.GetPath(keys) != nil
+}
+
+// Get the value at key in the Tree.
+// Key is a dot-separated path (e.g. a.b.c) without single/double quoted strings.
+// If you need to retrieve non-bare keys, use GetPath.
+// Returns nil if the path does not exist in the tree.
+// If keys is of length zero, the current tree is returned.
+func (t *Tree) Get(key string) interface{} {
+	if key == "" {
+		return t
+	}
+	return t.GetPath(strings.Split(key, "."))
+}
+
+// GetPath returns the element in the tree indicated by 'keys'.
+// If keys is of length zero, the current tree is returned.
+func (t *Tree) GetPath(keys []string) interface{} {
+	if len(keys) == 0 {
+		return t
+	}
+	subtree := t
+	for _, intermediateKey := range keys[:len(keys)-1] {
+		value, exists := subtree.Values[intermediateKey]
+		if !exists {
+			return nil
+		}
+		switch node := value.(type) {
+		case *Tree:
+			subtree = node
+		case []*Tree:
+			// go to most recent element
+			if len(node) == 0 {
+				return nil
+			}
+			subtree = node[len(node)-1]
+		default:
+			return nil // cannot navigate through other node types
+		}
+	}
+	// branch based on final node type
+	switch node := subtree.Values[keys[len(keys)-1]].(type) {
+	case *Value:
+		return node.Val
+	default:
+		return node
+	}
+}
+
+// Keys returns the keys of the toplevel tree (does not recurse).
+func (t *Tree) Keys() []string {
+	keys := make([]string, len(t.Values))
+	i := 0
+	for k := range t.Values {
+		keys[i] = k
+		i++
+	}
+	return keys
 }

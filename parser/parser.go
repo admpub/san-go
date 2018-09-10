@@ -95,7 +95,7 @@ func (p *Parser) parseAssign(key lexer.Token) StateFn {
 		return p.stateTokenError(key, fmt.Sprintf("key '%s' is already defined", key.Value))
 	}
 
-	p.tree.Values[key.Value] = Value{value, position}
+	p.tree.Values[key.Value] = &Value{value, position}
 
 	return p.parseStart
 }
@@ -143,7 +143,7 @@ func (p *Parser) parseComment(comment lexer.Token, previousState StateFn) StateF
 		p.tree.Values[""] = []interface{}{}
 	}
 
-	p.tree.Values[""] = append(p.tree.Values[""].([]interface{}), value)
+	p.tree.Values[""] = append(p.tree.Values[""].([]interface{}), &value)
 	return previousState
 }
 
@@ -314,8 +314,8 @@ func (p *Parser) parseList() interface{} {
 			break
 		}
 	}
-	// An list of Trees is actually an list of inline
-	// tables, which is a shorthand for a table list. If the
+	// A list of Trees is actually an list of inline
+	// map, which is a shorthand for a table list. If the
 	// list was not converted from []interface{} to []*Tree,
 	// the two notations would not be equivalent.
 	if listType == reflect.TypeOf(NewTree()) {
