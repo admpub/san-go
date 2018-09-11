@@ -80,7 +80,7 @@ func (p *Parser) parseStart() StateFn {
 }
 
 func (p *Parser) parseAssign(key lexer.Token) StateFn {
-	p.expect(lexer.TokenEqual)
+	p.expectNext(lexer.TokenEqual)
 	if p.err != nil {
 		return nil
 	}
@@ -245,21 +245,22 @@ Loop:
 		case lexer.TokenRightBrace:
 			break Loop
 		case lexer.TokenKey:
-			if !tokenIsComma(previous) && previous != nil {
+			if tokenIsComma(previous) != true && previous != nil {
 				p.stateTokenError(*token, "unterminated map")
 				return nil
 			}
-			p.expect(lexer.TokenEqual)
+			p.expectNext(lexer.TokenEqual)
 			if p.err != nil {
 				return nil
 			}
+			key := token
 			token = p.nextToken()
 			position, value := p.parseRvalue(token)
 			if p.err != nil {
 				return nil
 			}
 			_, _ = position, value
-			tree.SetPath([]string{token.Value}, value)
+			tree.SetPath([]string{key.Value}, value)
 		case lexer.TokenComma:
 			if previous == nil {
 				p.stateTokenError(*token, "map cannot start with a comma")
@@ -269,7 +270,6 @@ Loop:
 				p.stateTokenError(*previous, "trailing comma at the end of map")
 				return nil
 			}
-			p.nextToken()
 		default:
 			p.stateTokenError(*token, fmt.Sprintf("unexpected token in map"))
 			return nil
@@ -342,7 +342,7 @@ func (p *Parser) nextToken() *lexer.Token {
 	return &token
 }
 
-func (p *Parser) expect(typ lexer.TokenType) {
+func (p *Parser) expectNext(typ lexer.TokenType) {
 	it := p.nextToken()
 	p.assertEqual(typ, it)
 }

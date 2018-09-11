@@ -96,7 +96,6 @@ func valueFromTree(mtype reflect.Type, treeVal *parser.Tree) (reflect.Value, err
 	case reflect.Map:
 		mval = reflect.MakeMap(mtype)
 		for _, key := range treeVal.Keys() {
-			// TODO: path splits key
 			val := treeVal.GetPath([]string{key})
 			mvalf, err := valueFromSan(mtype.Elem(), val)
 			if err != nil {
