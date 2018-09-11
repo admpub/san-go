@@ -8,12 +8,12 @@ import (
 )
 
 type D struct {
-	A int64
+	A string
 }
 
 type C struct {
 	A int64 `san:"a"`
-	D D
+	D []D   `san:"d"`
 }
 
 type S struct {
@@ -26,7 +26,7 @@ func main() {
 	str1 := `
 a = "a"
 b = [1, 2]
-c = { a = 1, d = { a = 3 } }
+c = { a = 1, d = [ { a = "3.3" }, { a = "xxx" } ] }
 `
 	tree, err := parser.Parse([]byte(str1))
 	if err != nil {
@@ -40,5 +40,11 @@ c = { a = 1, d = { a = 3 } }
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%#v\n", s)
+	fmt.Printf("%#v\n\n", s)
+
+	b, err := san.Marshal(s)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print(string(b))
 }

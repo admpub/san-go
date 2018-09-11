@@ -11,12 +11,6 @@ import (
 
 var marshalerType = reflect.TypeOf(new(Marshaler)).Elem()
 
-// Marshaler is the interface implemented by types that
-// can marshal themselves into valid TOML.
-type Marshaler interface {
-	MarshalSAN() ([]byte, error)
-}
-
 type Options struct {
 	Name      string
 	Include   bool
@@ -74,7 +68,7 @@ func valueFromTree(mtype reflect.Type, treeVal *parser.Tree) (reflect.Value, err
 		mval = reflect.New(mtype).Elem()
 		for i := 0; i < mtype.NumField(); i++ {
 			mtypef := mtype.Field(i)
-			opts := tomlOptions(mtypef)
+			opts := sanOptions(mtypef)
 			if opts.Include {
 				baseKey := opts.Name
 				keysToTry := []string{baseKey, strings.ToLower(baseKey), strings.ToTitle(baseKey)}
@@ -221,7 +215,7 @@ func valueFromOtherSlice(mtype reflect.Type, tval []interface{}) (reflect.Value,
 	return mval, nil
 }
 
-func tomlOptions(vf reflect.StructField) Options {
+func sanOptions(vf reflect.StructField) Options {
 	tag := vf.Tag.Get("san")
 	parse := strings.Split(tag, ",")
 	result := Options{Name: vf.Name, Include: true, OmitEmpty: false}
