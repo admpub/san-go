@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-// WriteTo write a value to w
-func (t *Tree) WriteTo(w io.Writer, indent, keyspace string, bytesCount int64, arraysOneElementPerLine bool) (int64, error) {
+// Write write a value to w
+func (t *Tree) Write(w io.Writer, indent, keyspace string, bytesCount int64, arraysOneElementPerLine bool) (int64, error) {
 	simpleValuesKeys := make([]string, 0)
 	complexValuesKeys := make([]string, 0)
 
@@ -64,7 +64,7 @@ func (t *Tree) WriteTo(w io.Writer, indent, keyspace string, bytesCount int64, a
 			if err != nil {
 				return bytesCount, err
 			}
-			bytesCount, err := node.WriteTo(w, indent+"  ", k, bytesCount, arraysOneElementPerLine)
+			bytesCount, err := node.Write(w, indent+"  ", k, bytesCount, arraysOneElementPerLine)
 			if err != nil {
 				return bytesCount, err
 			}
@@ -85,7 +85,7 @@ func (t *Tree) WriteTo(w io.Writer, indent, keyspace string, bytesCount int64, a
 				if err != nil {
 					return bytesCount, err
 				}
-				bytesCount, err = subTree.WriteTo(w, indent+"    ", k, bytesCount, arraysOneElementPerLine)
+				bytesCount, err = subTree.Write(w, indent+"    ", k, bytesCount, arraysOneElementPerLine)
 				if err != nil {
 					return bytesCount, err
 				}
@@ -107,7 +107,7 @@ func (t *Tree) WriteTo(w io.Writer, indent, keyspace string, bytesCount int64, a
 }
 
 func sanValueStringRepresentation(v interface{}, indent string, arraysOneElementPerLine bool) (string, error) {
-	// this interface check is added to dereference the change made in the WriteTo function.
+	// this interface check is added to dereference the change made in the Write function.
 	// That change was made to allow this function to see formatting options.
 	tv, ok := v.(*Value)
 	if ok {

@@ -17,7 +17,7 @@ type Options struct {
 	OmitEmpty bool
 }
 
-// Decoder reads and decodes TOML values from an input stream.
+// Decoder reads and decodes SAN values from an input stream.
 type Decoder struct {
 	r    io.Reader
 	tree *parser.Tree
@@ -57,7 +57,7 @@ func Unmarshal(data []byte, v interface{}) error {
 	return nil
 }
 
-// Convert toml tree to marshal struct or map, using marshal type
+// Convert san tree to marshal struct or map, using marshal type
 func valueFromTree(mtype reflect.Type, treeVal *parser.Tree) (reflect.Value, error) {
 	if mtype.Kind() == reflect.Ptr {
 		return unwrapPointer(mtype, treeVal)
@@ -111,7 +111,7 @@ func unwrapPointer(mtype reflect.Type, tval interface{}) (reflect.Value, error) 
 	return mval, nil
 }
 
-// Convert toml value to marshal value, using marshal type
+// Convert san value to marshal value, using marshal type
 func valueFromSan(mtype reflect.Type, tval interface{}) (reflect.Value, error) {
 	if mtype.Kind() == reflect.Ptr {
 		return unwrapPointer(mtype, tval)
@@ -189,7 +189,7 @@ func valueFromSan(mtype reflect.Type, tval interface{}) (reflect.Value, error) {
 	}
 }
 
-// Convert toml value to marshal struct/map slice, using marshal type
+// Convert san value to marshal struct/map slice, using marshal type
 func valueFromTreeSlice(mtype reflect.Type, tval []*parser.Tree) (reflect.Value, error) {
 	mval := reflect.MakeSlice(mtype, len(tval), len(tval))
 	for i := 0; i < len(tval); i++ {
@@ -202,7 +202,7 @@ func valueFromTreeSlice(mtype reflect.Type, tval []*parser.Tree) (reflect.Value,
 	return mval, nil
 }
 
-// Convert toml value to marshal primitive slice, using marshal type
+// Convert san value to marshal primitive slice, using marshal type
 func valueFromOtherSlice(mtype reflect.Type, tval []interface{}) (reflect.Value, error) {
 	mval := reflect.MakeSlice(mtype, len(tval), len(tval))
 	for i := 0; i < len(tval); i++ {

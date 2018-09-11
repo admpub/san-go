@@ -22,7 +22,7 @@ encoder, except that there is no concept of a Marshaler interface or MarshalSAN
 function for sub-structs, and currently only definite types can be marshaled
 (i.e. no `interface{}`).
 The following struct annotations are supported:
-  toml:"Field"      Overrides the field's name to output.
+  san:"Field"      Overrides the field's name to output.
   omitempty         When set, empty values and groups are not emitted.
 Note that pointers are automatically assigned the "omitempty" option, as SAN
 explicitly does not handle null values (saying instead the label should be
@@ -42,7 +42,7 @@ Tree primitive types and corresponding marshal types:
 func Marshal(data interface{}) ([]byte, error) {
 	mtype := reflect.TypeOf(data)
 	if mtype.Kind() != reflect.Struct {
-		return []byte{}, errors.New("Only a struct can be marshaled to TOML")
+		return []byte{}, errors.New("Only a struct can be marshaled to SAN")
 	}
 	sval := reflect.ValueOf(data)
 	if isCustomMarshaler(mtype) {
@@ -54,7 +54,7 @@ func Marshal(data interface{}) ([]byte, error) {
 	}
 
 	var buf bytes.Buffer
-	_, err = t.WriteTo(&buf, "", "", 0, true)
+	_, err = t.Write(&buf, "", "", 0, true)
 
 	return buf.Bytes(), err
 }
@@ -98,7 +98,7 @@ func valueToTree(mtype reflect.Type, mval reflect.Value) (*parser.Tree, error) {
 	return tval, nil
 }
 
-// Convert given marshal value to toml value
+// Convert given marshal value to san value
 func valueToSan(mtype reflect.Type, mval reflect.Value) (interface{}, error) {
 	if mtype.Kind() == reflect.Ptr {
 		return valueToSan(mtype.Elem(), mval.Elem())
@@ -132,7 +132,7 @@ func valueToSan(mtype reflect.Type, mval reflect.Value) (interface{}, error) {
 	}
 }
 
-// Convert given marshal slice to slice of Toml trees
+// Convert given marshal slice to slice of SAN trees
 func valueToTreeSlice(mtype reflect.Type, mval reflect.Value) ([]*parser.Tree, error) {
 	tval := make([]*parser.Tree, mval.Len(), mval.Len())
 	for i := 0; i < mval.Len(); i++ {
@@ -145,7 +145,7 @@ func valueToTreeSlice(mtype reflect.Type, mval reflect.Value) ([]*parser.Tree, e
 	return tval, nil
 }
 
-// Convert given marshal slice to slice of toml values
+// Convert given marshal slice to slice of san values
 func valueToOtherSlice(mtype reflect.Type, mval reflect.Value) (interface{}, error) {
 	tval := make([]interface{}, mval.Len(), mval.Len())
 	for i := 0; i < mval.Len(); i++ {

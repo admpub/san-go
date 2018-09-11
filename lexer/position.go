@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// Position of a document element within a TOML document.
+// Position of a document element within a SAN document.
 //
 // Line and Col are both 1-indexed positions for the element's line number and
 // column number, respectively.  Values of zero or less will cause Invalid(),
