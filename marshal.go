@@ -41,7 +41,7 @@ Tree primitive types and corresponding marshal types:
 */
 func Marshal(data interface{}) ([]byte, error) {
 	mtype := reflect.TypeOf(data)
-	if mtype.Kind() != reflect.Struct {
+	if mtype.Kind() != reflect.Struct && mtype.Kind() != reflect.Map {
 		return []byte{}, errors.New("Only a struct can be marshaled to SAN")
 	}
 	sval := reflect.ValueOf(data)
@@ -126,8 +126,10 @@ func valueToSan(mtype reflect.Type, mval reflect.Value) (interface{}, error) {
 			return mval.String(), nil
 		case reflect.Struct:
 			return mval.Interface().(time.Time).Format(time.RFC3339), nil
+		case reflect.Interface:
+			return valueToSan(mval.Elem().Type(), mval.Elem())
 		default:
-			return nil, fmt.Errorf("Marshal can't handle %v(%v)", mtype, mtype.Kind())
+			return nil, fmt.Errorf("Marshal can't handle %v (%v)", mtype, mtype.Kind())
 		}
 	}
 }
