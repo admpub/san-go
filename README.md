@@ -11,7 +11,8 @@ Spec: [https://astrocorp.net/san](https://astrocorp.net/san/)
 Compatible with SAN version: [v1.0.0](https://astrocorp.net/san/versions/v1.0.0/)
 
 1. [Installation](#installation)
-2. [Usage](#usage)
+2. [Library](#library)
+3. [CLI](#cli)
 
 -------------------
 
@@ -24,7 +25,7 @@ go get -u github.com/phasersec/san-go/...
 
 
 
-## Usage
+## Library
 
 ```go
 package main
@@ -93,4 +94,21 @@ c = {
     },
   ]
 }
+```
+
+
+
+## CLI
+
+
+This repo also contains a CLI helper for the SAN format. It can be installed with the following command:
+```bash
+$ go get -u github.com/phasersec/san-go/...
+```
+
+### Examples
+
+Convert a [.toml, .json, .yml, .yaml] file to a .san
+```bash
+$ san convert ../config.yml # wil create ../config.san
 ```

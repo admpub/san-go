@@ -15,8 +15,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var convertOutput string
+
 func init() {
 	RootCmd.AddCommand(ConvertCmd)
+	ConvertCmd.Flags().StringVarP(&convertOutput, "output", "o", "", "Place the output into <file>")
+
 }
 
 // ConvertCmd is the `convert` command. It permit to convert configuration file in other formats to SAN
@@ -60,7 +64,10 @@ var ConvertCmd = &cobra.Command{
 			log.Fatal(err.Error())
 		}
 
-		err = ioutil.WriteFile(fileWithotuExt+".san", dataToWrite, fileInfo.Mode())
+		if convertOutput == "" {
+			convertOutput = fileWithotuExt + ".san"
+		}
+		err = ioutil.WriteFile(convertOutput, dataToWrite, fileInfo.Mode())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
