@@ -19,7 +19,7 @@ Compatible with SAN version: [v1.0.0](https://astrocorp.net/san/versions/v1.0.0/
 ## Installation
 
 ```bash
-go get -u github.com/phasersec/san-go
+go get -u github.com/phasersec/san-go/...
 ```
 
 
