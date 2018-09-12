@@ -33,7 +33,6 @@ import (
 	"fmt"
 
 	"github.com/phasersec/san-go"
-	"github.com/phasersec/san-go/parser"
 )
 
 type D struct {
