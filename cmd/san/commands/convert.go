@@ -20,7 +20,6 @@ var convertOutput string
 func init() {
 	RootCmd.AddCommand(ConvertCmd)
 	ConvertCmd.Flags().StringVarP(&convertOutput, "output", "o", "", "Place the output into <file>")
-
 }
 
 // ConvertCmd is the `convert` command. It permit to convert configuration file in other formats to SAN

@@ -2,5 +2,5 @@ package san
 
 const (
 	// Version is the san's parser version
-	Version = "0.3.0"
+	Version = "0.4.0"
 )

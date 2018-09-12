@@ -112,3 +112,8 @@ Convert a [.toml, .json, .yml, .yaml] file to a .san
 ```bash
 $ san convert ../config.yml # wil create ../config.san
 ```
+
+Automatically formats a SAN file
+```bash
+$ san fmt config.san
+```
