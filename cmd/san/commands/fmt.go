@@ -19,7 +19,7 @@ func init() {
 	FmtCmd.Flags().StringVarP(&fmtOutput, "output", "o", "", "Place the output into <file>")
 }
 
-// ConvertCmd is the `convert` command. It permit to convert configuration file in other formats to SAN
+// FmtCmd is the `fmt` command. It permit to automatically format a SAN file
 var FmtCmd = &cobra.Command{
 	Use:   "fmt [file]",
 	Args:  cobra.ExactArgs(1),
