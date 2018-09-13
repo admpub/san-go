@@ -117,3 +117,8 @@ Automatically formats a SAN file
 ```bash
 $ san fmt config.san
 ```
+
+Check a `.san` file validity
+```bash
+$ san validate config.san
+```

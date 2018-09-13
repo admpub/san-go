@@ -16,7 +16,7 @@ func init() {
 
 // ValidateCmd is the `validate` command. It permit to check if a .san file is valid or not
 var ValidateCmd = &cobra.Command{
-	Use:   "valdiate [file]",
+	Use:   "validate [file]",
 	Args:  cobra.ExactArgs(1),
 	Short: "check if a .san file validity",
 	Long:  "check if a .san file validity",
