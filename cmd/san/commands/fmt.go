@@ -65,5 +65,7 @@ func format(data []byte) []byte {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err.Error())
 	}
+
+	ret.Write(data)
 	return ret.Bytes()
 }
