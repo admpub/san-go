@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 
 	"github.com/astroflow/astroflow-go/log"
+	"github.com/phasersec/san-go"
+	"github.com/phasersec/san-go/lexer"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +28,7 @@ var FmtCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		file := args[0]
 		fileInfo, err := os.Stat(file)
+		s := map[string]interface{}{}
 		if err != nil {
 			log.Fatal(fmt.Sprintf("error: opening %s: %s", file, err))
 		}
@@ -41,7 +42,15 @@ var FmtCmd = &cobra.Command{
 			log.Fatal(err.Error())
 		}
 
-		data = format(data)
+		err = san.Unmarshal(data, &s)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		data, err = san.Marshal(s)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
 		if fmtOutput == "" {
 			fmtOutput = file
@@ -53,19 +62,19 @@ var FmtCmd = &cobra.Command{
 	},
 }
 
+// TODO
 func format(data []byte) []byte {
-	buf := bytes.NewBuffer(data)
+
 	var ret bytes.Buffer
-	scanner := bufio.NewScanner(buf)
-	for scanner.Scan() {
-		trimedLine := strings.TrimSpace(scanner.Text())
-		fmt.Println(trimedLine)
+	lx := lexer.NewLexer(data)
+
+	for token := range lx.Next() {
+		ret.WriteString(token.Value)
+		ret.WriteRune(' ')
+		eq := <-lx.Next()
+		ret.WriteString(eq.Value)
+		ret.WriteRune(' ')
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err.Error())
-	}
-
-	ret.Write(data)
 	return ret.Bytes()
 }
