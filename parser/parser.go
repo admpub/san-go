@@ -237,7 +237,11 @@ func (p *Parser) parseMap(position lexer.Position) *Tree {
 Loop:
 	for {
 		token := p.nextToken()
-		if token == nil || token.Type == lexer.TokenEOF {
+		if token == nil {
+			p.stateError("unterminated map")
+			return nil
+		}
+		if token.Type == lexer.TokenEOF {
 			p.stateTokenError(*token, "unterminated map")
 			return nil
 		}
@@ -287,7 +291,12 @@ func (p *Parser) parseList() interface{} {
 	listType := reflect.TypeOf(nil)
 	for {
 		token := p.nextToken()
-		if token == nil || token.Type == lexer.TokenEOF {
+		fmt.Println(token)
+		if token == nil {
+			p.stateError("unterminated list")
+			return nil
+		}
+		if token.Type == lexer.TokenEOF {
 			p.stateTokenError(*token, "unterminated list")
 			return nil
 		}

@@ -20,6 +20,7 @@ func init() {
 }
 
 // FmtCmd is the `fmt` command. It permit to automatically format a SAN file
+// TODO:
 var FmtCmd = &cobra.Command{
 	Use:   "fmt [file]",
 	Args:  cobra.ExactArgs(1),
@@ -62,7 +63,7 @@ var FmtCmd = &cobra.Command{
 	},
 }
 
-// TODO
+// TODO:
 func format(data []byte) []byte {
 
 	var ret bytes.Buffer

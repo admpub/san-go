@@ -213,8 +213,10 @@ func (lx *Lexer) lexRvalue() StateFn {
 			lx.depth -= 1
 			return lx.lexRightBrace
 		case LeftBracket:
+			lx.depth += 1
 			return lx.lexLeftBracket
 		case RightBracket:
+			lx.depth -= 1
 			return lx.lexRightBracket
 		case Hash:
 			return lx.lexComment(lx.lexRvalue)
