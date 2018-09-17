@@ -291,7 +291,6 @@ func (p *Parser) parseList() interface{} {
 	listType := reflect.TypeOf(nil)
 	for {
 		token := p.nextToken()
-		fmt.Println(token)
 		if token == nil {
 			p.stateError("unterminated list")
 			return nil
