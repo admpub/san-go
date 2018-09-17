@@ -193,6 +193,25 @@ func TestNestedLists(t *testing.T) {
 	})
 }
 
+func TestMultilineLists(t *testing.T) {
+	testLex(t, `ignore = [".git/**"]
+run = [
+  'go run testdata/main.go'
+]
+`, []Token{
+		{Position{1, 1}, TokenKey, "ignore"},
+		{Position{1, 8}, TokenEqual, "="},
+		{Position{1, 10}, TokenLeftBracket, "["},
+		{Position{1, 11}, TokenString, ".git/**"},
+		{Position{1, 20}, TokenRightBracket, "]"},
+		{Position{2, 1}, TokenKey, "run"},
+		{Position{2, 5}, TokenEqual, "="},
+		{Position{2, 7}, TokenLeftBracket, "["},
+		{Position{3, 3}, TokenString, "go run testdata/main.go"},
+		{Position{4, 1}, TokenRightBracket, "]"},
+		{Position{5, 1}, TokenEOF, ""},
+	})
+}
 func TestSimpleMultilineString(t *testing.T) {
 	testLex(t, `foo = """hello "literal" world"""`, []Token{
 		{Position{1, 1}, TokenKey, "foo"},
