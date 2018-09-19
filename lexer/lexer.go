@@ -169,10 +169,7 @@ func (lx *Lexer) lexComment(previousState StateFn) StateFn {
 		lx.next()
 		commentValue.WriteRune(next)
 	}
-	strCommentValue := commentValue.String()[1:]
-	if len(strCommentValue) > 1 && isWhitespace(rune(strCommentValue[0])) {
-		strCommentValue = strCommentValue[1:]
-	}
+	strCommentValue := commentValue.String()
 	lx.emitWithValue(TokenComment, strCommentValue)
 
 	lx.ignore()

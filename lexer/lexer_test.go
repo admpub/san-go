@@ -27,7 +27,7 @@ func testLex(t *testing.T, input string, expectedTokens []Token) {
 
 func TestSimpleComment(t *testing.T) {
 	testLex(t, "# blahblah", []Token{
-		{Position{1, 1}, TokenComment, "blahblah"},
+		{Position{1, 1}, TokenComment, "# blahblah"},
 		{Position{1, 11}, TokenEOF, ""},
 	})
 }
@@ -41,6 +41,15 @@ func TestSimpleString(t *testing.T) {
 	})
 }
 
+func TestSimpleStringWithComment(t *testing.T) {
+	testLex(t, `str = "myString" #comment`, []Token{
+		{Position{1, 1}, TokenKey, "str"},
+		{Position{1, 5}, TokenEqual, "="},
+		{Position{1, 7}, TokenString, "myString"},
+		{Position{1, 18}, TokenComment, "#comment"},
+		{Position{1, 26}, TokenEOF, ""},
+	})
+}
 func TestDigitalKey(t *testing.T) {
 	testLex(t, `123 = "myString"`, []Token{
 		{Position{1, 1}, TokenKey, "123"},
