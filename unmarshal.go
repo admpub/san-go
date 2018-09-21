@@ -23,6 +23,14 @@ type Decoder struct {
 	tree *parser.Tree
 }
 
+// Unmarshaler is the interface implemented by types that can unmarshal a SAN description of
+// themselves.
+// The input can be assumed to be a valid encoding of a SAN value. UnmarshalSAN must copy the
+// SAN data if it wishes to retain the data after returning.
+type Unmarshaler interface {
+	UnmarshalSAN([]byte) error
+}
+
 // format error utility
 func e(format string, args ...interface{}) error {
 	return fmt.Errorf("san: "+format, args...)
