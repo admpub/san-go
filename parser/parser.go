@@ -246,6 +246,8 @@ Loop:
 			return nil
 		}
 		switch token.Type {
+		case lexer.TokenComment:
+			continue
 		case lexer.TokenRightBrace:
 			break Loop
 		case lexer.TokenKey:
@@ -298,6 +300,9 @@ func (p *Parser) parseList() interface{} {
 		if token.Type == lexer.TokenEOF {
 			p.stateTokenError(*token, "unterminated list")
 			return nil
+		}
+		if token.Type == lexer.TokenComment {
+			continue
 		}
 		position, val := p.parseRvalue(token)
 		_ = position
