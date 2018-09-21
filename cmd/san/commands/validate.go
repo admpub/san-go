@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/astroflow/astroflow-go/log"
+	"github.com/astrocorp42/astroflow-go/log"
 	"github.com/phasersec/san-go/parser"
 	"github.com/spf13/cobra"
 )
