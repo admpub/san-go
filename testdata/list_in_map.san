@@ -1,0 +1,8 @@
+description = "This is a configuration file for rocket: Deploy software as fast and easily as possible. See https://github.com/astrocorp42/rocket"
+
+docker = {
+  login = false
+  images = [
+    "astrocorp/signal_api:latest"
+  ]
+}

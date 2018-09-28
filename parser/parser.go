@@ -251,10 +251,6 @@ Loop:
 		case lexer.TokenRightBrace:
 			break Loop
 		case lexer.TokenKey:
-			if tokenIsComma(previous) != true && previous != nil {
-				p.stateTokenError(*token, "unterminated map")
-				return nil
-			}
 			p.expectNext(lexer.TokenEqual)
 			if p.err != nil {
 				return nil
