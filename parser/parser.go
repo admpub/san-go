@@ -251,6 +251,10 @@ Loop:
 		case lexer.TokenRightBrace:
 			break Loop
 		case lexer.TokenKey:
+			if previous != nil && tokenIsComma(previous) == false && previous.Line == token.Line {
+				p.stateTokenError(*token, "missing comma in inline map")
+				return nil
+			}
 			p.expectNext(lexer.TokenEqual)
 			if p.err != nil {
 				return nil

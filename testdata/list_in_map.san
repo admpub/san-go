@@ -5,4 +5,5 @@ docker = {
   images = [
     "astrocorp/signal_api:latest"
   ]
+  a = { b = 1, b = 2 }
 }
