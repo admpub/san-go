@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/astrocorp42/astroflow-go"
-	"github.com/astrocorp42/astroflow-go/log"
+	"github.com/bloom42/astroflow-go"
+	"github.com/bloom42/astroflow-go/log"
 	"github.com/phasersec/san-go/cmd/san/commands"
 )
 

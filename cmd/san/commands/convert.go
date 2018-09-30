@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/astrocorp42/astroflow-go/log"
+	"github.com/bloom42/astroflow-go/log"
 	"github.com/go-yaml/yaml"
 	"github.com/phasersec/san-go"
 	"github.com/spf13/cobra"

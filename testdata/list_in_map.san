@@ -1,4 +1,4 @@
-description = "This is a configuration file for rocket: Deploy software as fast and easily as possible. See https://github.com/astrocorp42/rocket"
+description = "This is a configuration file for rocket: Deploy software as fast and easily as possible. See https://github.com/bloom42/rocket"
 
 docker = {
   login = false
