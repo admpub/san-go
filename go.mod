@@ -1,8 +1,8 @@
-module github.com/phasersec/san-go
+module github.com/bloom42/san-go
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/bloom42/astroflow-go v0.10.1
+	github.com/bloom42/astroflow-go v0.10.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

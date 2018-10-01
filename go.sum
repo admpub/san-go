@@ -1,7 +1,7 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/bloom42/astroflow-go v0.10.1 h1:U/e05nWLlAWqSMMPU0j8do679mVxtTyllxNsxehqekY=
-github.com/bloom42/astroflow-go v0.10.1/go.mod h1:L3uUqJbzpLwMW88MqNy6jSQoNLa+TY8UFfzpfo5DufA=
+github.com/bloom42/astroflow-go v0.10.2 h1:oVyt3DDmGZA6QO4i27JinH2k8lRBd1s/catas2/Jqs4=
+github.com/bloom42/astroflow-go v0.10.2/go.mod h1:L3uUqJbzpLwMW88MqNy6jSQoNLa+TY8UFfzpfo5DufA=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-yaml/yaml v2.1.0+incompatible h1:RYi2hDdss1u4YE7GwixGzWwVo47T8UQwnTLB6vQiq+o=

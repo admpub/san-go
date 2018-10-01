@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/phasersec/san-go/parser"
+	"github.com/bloom42/san-go/parser"
 )
 
 var marshalerType = reflect.TypeOf(new(Marshaler)).Elem()

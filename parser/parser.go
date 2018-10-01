@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/phasersec/san-go/lexer"
+	"github.com/bloom42/san-go/lexer"
 )
 
 func init() {
