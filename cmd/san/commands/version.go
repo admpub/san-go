@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/phasersec/san-go"
+	"github.com/bloom42/san-go"
 	"github.com/spf13/cobra"
 )
 

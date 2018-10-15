@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/phasersec/san-go/lexer"
+	"github.com/bloom42/san-go/lexer"
 )
 
 // Tree is the result of the parsing of a SAN file.

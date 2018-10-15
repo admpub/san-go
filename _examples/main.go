@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/phasersec/san-go"
-	"github.com/phasersec/san-go/parser"
+	"github.com/bloom42/san-go"
+	"github.com/bloom42/san-go/parser"
 )
 
 type D struct {

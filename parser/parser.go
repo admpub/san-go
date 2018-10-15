@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/phasersec/san-go/lexer"
+	"github.com/bloom42/san-go/lexer"
 )
 
 func init() {
@@ -251,8 +251,8 @@ Loop:
 		case lexer.TokenRightBrace:
 			break Loop
 		case lexer.TokenKey:
-			if tokenIsComma(previous) != true && previous != nil {
-				p.stateTokenError(*token, "unterminated map")
+			if previous != nil && tokenIsComma(previous) == false && previous.Line == token.Line {
+				p.stateTokenError(*token, "missing comma in inline map")
 				return nil
 			}
 			p.expectNext(lexer.TokenEqual)

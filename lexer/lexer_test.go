@@ -463,3 +463,28 @@ func TestEscapeInString(t *testing.T) {
 		{Position{1, 15}, TokenEOF, ""},
 	})
 }
+
+func TestListInMap(t *testing.T) {
+	str := `docker = {
+  login = false
+  images = [
+    "astrocorp/signal_api:latest"
+  ]
+}
+`
+	testLex(t, str, []Token{
+		{Position{1, 1}, TokenKey, "docker"},
+		{Position{1, 8}, TokenEqual, "="},
+		{Position{1, 10}, TokenLeftBrace, "{"},
+		{Position{2, 3}, TokenKey, "login"},
+		{Position{2, 9}, TokenEqual, "="},
+		{Position{2, 11}, TokenBoolean, "false"},
+		{Position{3, 3}, TokenKey, "images"},
+		{Position{3, 10}, TokenEqual, "="},
+		{Position{3, 12}, TokenLeftBracket, "["},
+		{Position{4, 5}, TokenString, "astrocorp/signal_api:latest"},
+		{Position{5, 3}, TokenRightBracket, "]"},
+		{Position{6, 1}, TokenRightBrace, "}"},
+		{Position{7, 1}, TokenEOF, ""},
+	})
+}

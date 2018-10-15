@@ -1,8 +1,8 @@
 # SAN-go
 
-[![GoDoc](https://godoc.org/github.com/phasersec/san-go?status.svg)](https://godoc.org/github.com/phasersec/san-go)
-[![Build Status](https://travis-ci.org/phasersec/san-go.svg?branch=master)](https://travis-ci.org/phasersec/san-go)
-[![GitHub release](https://img.shields.io/github/release/phasersec/san-go.svg)](https://github.com/phasersec/san-go/releases/latest)
+[![GoDoc](https://godoc.org/github.com/bloom42/san-go?status.svg)](https://godoc.org/github.com/bloom42/san-go)
+[![Build Status](https://travis-ci.org/bloom42/san-go.svg?branch=master)](https://travis-ci.org/bloom42/san-go)
+[![GitHub release](https://img.shields.io/github/release/bloom42/san-go.svg)](https://github.com/bloom42/san-go/releases/latest)
 
 SAN (pronounce `/seɪn/`, like sane) CLI and parser for Go.
 
@@ -20,7 +20,7 @@ Compatible with SAN version: [v1.0.0](https://astrocorp.net/san/versions/v1.0.0/
 ## Installation
 
 ```bash
-go get -u github.com/phasersec/san-go/...
+go get -u github.com/bloom42/san-go/...
 ```
 
 
@@ -33,7 +33,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/phasersec/san-go"
+	"github.com/bloom42/san-go"
 )
 
 type D struct {
@@ -103,7 +103,7 @@ c = {
 
 This repo also contains a CLI helper for the SAN format. It can be installed with the following command:
 ```bash
-$ go get -u github.com/phasersec/san-go/...
+$ go get -u github.com/bloom42/san-go/...
 ```
 
 ### Examples

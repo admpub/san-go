@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/phasersec/san-go/parser"
+	"github.com/bloom42/san-go/parser"
 )
 
 // Marshaler is the interface implemented by types that
